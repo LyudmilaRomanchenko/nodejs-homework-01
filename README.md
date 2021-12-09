@@ -15,4 +15,4 @@ https://prnt.sc/22gursc
 
 # Удаляем контакт
 
-node index.js --action remove --id=3
+https://prnt.sc/22hvc7o
