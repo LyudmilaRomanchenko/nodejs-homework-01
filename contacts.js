@@ -7,56 +7,79 @@ console.log(contactsPath);
 
 // считываем список контактов
 async function getContacts() {
-  const data = await fs.readFile(contactsPath);
-  const contacts = JSON.parse(data);
-  return contacts;
+  try {
+    const data = await fs.readFile(contactsPath);
+    const contacts = JSON.parse(data);
+    return contacts;
+  } catch (err) {
+    console.error(err.message);
+  }
 }
 
 // обновляем список контактов
 async function updateContacts(contacts) {
-  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+  try {
+    await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+  } catch (err) {
+    console.error(err.message);
+  }
 }
 
 async function listContacts() {
-  const contacts = await getContacts();
-  return contacts;
+  try {
+    const contacts = await getContacts();
+    return contacts;
+  } catch (err) {
+    console.error(err.message);
+  }
 }
 
 async function getContactById(contactId) {
-  const contacts = await getContacts();
-  const result = contacts.find((contact) => contact.id === `${contactId}`);
+  try {
+    const contacts = await getContacts();
+    const result = contacts.find((contact) => contact.id === `${contactId}`);
 
-  if (!result) {
-    return null;
+    if (!result) {
+      return null;
+    }
+    return result;
+  } catch (err) {
+    console.error(err.message);
   }
-
-  return result;
 }
 
 async function removeContact(contactId) {
-  const contacts = await getContacts();
-  const contactIndex = contacts.findIndex(
-    (contact) => contact.id === `${contactId}`
-  );
+  try {
+    const contacts = await getContacts();
+    const contactIndex = contacts.findIndex(
+      (contact) => contact.id === `${contactId}`
+    );
 
-  if (contactIndex === -1) {
-    return null;
+    if (contactIndex === -1) {
+      return null;
+    }
+
+    const remove = contacts.splice(contactIndex, 1);
+    updateContacts(contacts);
+    return remove;
+  } catch (err) {
+    console.error(err.message);
   }
-
-  const remove = contacts.splice(contactIndex, 1);
-  updateContacts(contacts);
-  return remove;
 }
 
 async function addContact(name, email, phone) {
-  const newContact = { name, email, phone, id: v4() };
-  const contacts = await getContacts();
-  contacts.push(newContact);
+  try {
+    const newContact = { name, email, phone, id: v4() };
+    const contacts = await getContacts();
+    contacts.push(newContact);
 
-  updateContacts(contacts);
+    updateContacts(contacts);
 
-  // по правилам база данных должна возвращать новый созданый обьект
-  return newContact;
+    // по правилам база данных должна возвращать новый созданый обьект
+    return newContact;
+  } catch (err) {
+    console.error(err.message);
+  }
 }
 
 module.exports = {
